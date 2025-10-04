@@ -4,244 +4,293 @@
   <meta charset="utf-8">
   <title>Forever Apparel — Official Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Graffiti font -->
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #000; color: #fff; }
-    header { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; background:#111; }
-    header img { height:48px; }
-    .products { display:grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap:16px; padding:20px; }
-    .card { border:1px solid #333; border-radius:8px; overflow:hidden; background:#111; }
+    /* Global */
+    :root { --bg:#000; --panel:#111; --ink:#fff; --dim:#bbb; --line:#333; --green:#0f0; --blue:#0070f3; }
+    html, body { margin:0; background:var(--bg); color:var(--ink); }
+    body { font-family: 'Rubik Distressed', cursive; letter-spacing: .3px; }
+
+    /* Header */
+    header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:var(--panel); border-bottom:1px solid var(--line); }
+    header img { height:56px; width:auto; border-radius:8px; }
+    .brand-wrap { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .brand h1 { font-size: 1.9rem; margin:0; line-height:1; }
+    .motto {
+      font-style: italic; font-weight: 700; color: var(--green);
+      text-shadow: 0 0 8px var(--green), 0 0 12px var(--green);
+      font-size: 1.15rem; margin: 2px 0 0;
+      letter-spacing: 1px;
+    }
+    .shop-link { color:var(--ink); text-decoration:none; border:1px solid var(--ink); padding:8px 14px; border-radius:999px; }
+
+    /* Content */
+    main { padding: 10px 20px 40px; max-width:1200px; margin:0 auto; }
+    .lead { color:var(--dim); margin: 14px 0 10px; }
+
+    blockquote { margin:20px 0; padding:12px 14px; border-left:4px solid var(--ink); background:#222; }
+
+    /* Products grid */
+    .products { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:16px; margin-top: 14px; }
+    .card { border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--panel); }
     .card img { width:100%; height:260px; object-fit:contain; background:#000; }
-    .card .body { padding:10px; }
-    .price { color:#0f0; font-weight:bold; font-size:1.1em; }
-    .btn {
-      display:inline-block;
-      margin-top:8px;
-      padding:8px 14px;
-      background:#0f0;
-      color:#000;
-      font-weight:bold;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      text-decoration:none;
-      transition:0.2s;
-    }
-    .btn:hover { background:#0c0; }
+    .card .body { padding:12px; }
+    .title { font-size:1.1rem; }
+    .price { color:var(--green); font-weight:700; font-size:1.05rem; }
+
+    /* Controls */
+    label { font-size: .95rem; }
     select {
-      margin-top:6px;
-      padding:4px;
-      border-radius:4px;
-      border:1px solid #555;
-      background:#111;
-      color:#fff;
+      margin-top:6px; padding:6px 8px; border-radius:6px;
+      border:1px solid #555; background:#181818; color:#fff; font-family:inherit;
     }
-    label { font-size:0.9em; }
-    blockquote { margin:20px; padding:12px; border-left:4px solid #fff; background:#222; }
-    .gallery { display:flex; gap:10px; flex-wrap:wrap; margin:20px; }
+
+    /* Buttons */
+    .btn {
+      display:inline-block; margin-top:8px; padding:9px 14px;
+      background:var(--green); color:#000; font-weight:700; border:none;
+      border-radius:8px; cursor:pointer; text-decoration:none; transition:.15s;
+      font-family: inherit;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.shopify { background:var(--blue); color:#fff; }
+    .btn.shopify:hover { filter: brightness(1.1); }
+
+    /* Gallery, footer */
+    .gallery { display:flex; gap:10px; flex-wrap:wrap; margin:20px 0; }
     .gallery img { border:2px solid #444; border-radius:6px; }
-    footer { text-align:center; padding:20px; background:#111; border-top:1px solid #333; }
-    hr { border:0; border-top:1px solid #444; margin:30px 0; }
+    hr { border:0; border-top:1px solid var(--line); margin:26px 0; }
+    footer { text-align:center; padding:24px 20px 40px; background:var(--panel); border-top:1px solid var(--line); color:#bbb; }
   </style>
+
+  <script>
+    // PayPal Buy Now (classic) with size in the item name — works on static sites
+    function buyNow(productName, priceUSD, selectId) {
+      const size = (document.getElementById(selectId)?.value) || 'One Size';
+      const businessEmail = 'YOUR_PAYPAL_EMAIL@example.com'; // <- change this to your PayPal email
+      const itemName = encodeURIComponent(productName + ' - Size: ' + size);
+
+      const url =
+        'https://www.paypal.com/cgi-bin/webscr'
+        + '?cmd=_xclick'
+        + '&business=' + encodeURIComponent(businessEmail)
+        + '&item_name=' + itemName
+        + '&amount=' + encodeURIComponent(priceUSD.toFixed(2))
+        + '&currency_code=USD'
+        + '&no_shipping=1'
+        + '&no_note=0'
+        + '&lc=US'
+        + '&bn=PP-BuyNowBF:btn_buynow_LG.gif:NonHostedGuest';
+
+      window.open(url, '_blank');
+    }
+
+    // Helper to open Shopify link (replace with your store + variant ids)
+    function shopifyBuy(url) {
+      window.open(url, '_blank');
+    }
+  </script>
 </head>
 <body>
 
-<header>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <img src="images/logo-ballhogs.jpg" alt="Forever Apparel Logo">
-    <h1>Forever Apparel</h1>
-  </div>
-  <a href="#shop" style="color:#fff;">Shop Now</a>
-</header>
-
-<main>
-  <p style="padding:20px;">Minimal palette, maximum statement — built in <em>black</em> &amp; <mark>white</mark>.</p>
-
-  <blockquote>“Designs that feel classic the moment you put them on.”</blockquote>
-
-  <h2 id="shop" style="padding-left:20px;">Latest Drop</h2>
-  <div class="products">
-
-    <!-- Rhinestone Pants -->
-    <div class="card">
-      <img src="images/rhinestone-pants.jpg" alt="Rhinestone Pants">
-      <div class="body">
-        <strong>Rhinestone Pants</strong><br>
-        <span class="price">$80.00</span><br>
-        <label for="size-pants">Size:</label>
-        <select id="size-pants" name="size">
-          <option value="S">Small</option>
-          <option value="M">Medium</option>
-          <option value="L">Large</option>
-          <option value="XL">XL</option>
-        </select><br><br>
-        <a class="btn" href="https://paypal.me/ForeverApparel/80" target="_blank">Buy Now</a>
+  <header>
+    <div class="brand-wrap">
+      <img src="images/logo-ballhogs.jpg" alt="Forever Apparel Logo">
+      <div class="brand">
+        <h1>Forever Apparel</h1>
+        <div class="motto">"Why Not Be Fly?"</div>
       </div>
     </div>
+    <a class="shop-link" href="#shop">Shop Now</a>
+  </header>
 
-    <!-- MLB Tee Pack -->
-    <div class="card">
-      <img src="images/mlb-tee-pack.jpg" alt="MLB Tee Pack">
-      <div class="body">
-        <strong>MLB Tee Pack</strong><br>
-        <span class="price">$45.00</span><br>
-        <label for="size-tee">Size:</label>
-        <select id="size-tee" name="size">
-          <option value="S">Small</option>
-          <option value="M">Medium</option>
-          <option value="L">Large</option>
-          <option value="XL">XL</option>
-        </select><br><br>
-        <a class="btn" href="https://paypal.me/ForeverApparel/45" target="_blank">Buy Now</a>
+  <main>
+    <p class="lead">Minimal palette, maximum statement — built in <em>black</em> &amp; <mark>white</mark>.</p>
+
+    <blockquote>“Designs that feel classic the moment you put them on.”</blockquote>
+
+    <h2 id="shop">Latest Drop</h2>
+
+    <div class="products">
+
+      <!-- Rhinestone Pants -->
+      <div class="card">
+        <img src="images/rhinestone-pants.jpg" alt="Rhinestone Pants">
+        <div class="body">
+          <div class="title">Rhinestone Pants</div>
+          <div class="price">$80.00</div>
+          <label for="size-pants">Size:</label>
+          <select id="size-pants" name="size">
+            <option value="S">Small</option><option value="M">Medium</option>
+            <option value="L">Large</option><option value="XL">XL</option>
+          </select><br><br>
+          <a class="btn shopify" onclick="shopifyBuy('https://yourstore.myshopify.com/cart/123456789:1')">Buy Now (Shopify)</a>
+          <button class="btn" onclick="buyNow('Rhinestone Pants', 80.00, 'size-pants')">Buy Now (PayPal)</button>
+        </div>
       </div>
+
+      <!-- MLB Tee Pack -->
+      <div class="card">
+        <img src="images/mlb-tee-pack.jpg" alt="MLB Tee Pack">
+        <div class="body">
+          <div class="title">MLB Tee Pack</div>
+          <div class="price">$45.00</div>
+          <label for="size-tee">Size:</label>
+          <select id="size-tee" name="size">
+            <option value="S">Small</option><option value="M">Medium</option>
+            <option value="L">Large</option><option value="XL">XL</option>
+          </select><br><br>
+          <a class="btn shopify" onclick="shopifyBuy('https://yourstore.myshopify.com/cart/234567890:1')">Buy Now (Shopify)</a>
+          <button class="btn" onclick="buyNow('MLB Tee Pack', 45.00, 'size-tee')">Buy Now (PayPal)</button>
+        </div>
+      </div>
+
+      <!-- Ball Hogs Hoodie — Black -->
+      <div class="card">
+        <img src="images/ballhogs-hoodie-black.jpg" alt="Ball Hogs Hoodie — Black">
+        <div class="body">
+          <div class="title">Ball Hogs Hoodie — Black</div>
+          <div class="price">$120.00</div>
+          <label for="size-hoodie-black">Size:</label>
+          <select id="size-hoodie-black" name="size">
+            <option value="S">Small</option><option value="M">Medium</option>
+            <option value="L">Large</option><option value="XL">XL</option>
+          </select><br><br>
+          <a class="btn shopify" onclick="shopifyBuy('https://yourstore.myshopify.com/cart/345678901:1')">Buy Now (Shopify)</a>
+          <button class="btn" onclick="buyNow('Ball Hogs Hoodie — Black', 120.00, 'size-hoodie-black')">Buy Now (PayPal)</button>
+        </div>
+      </div>
+
+      <!-- Ball Hogs Hoodie — Brown -->
+      <div class="card">
+        <img src="images/ballhogs-hoodie-brown.jpg" alt="Ball Hogs Hoodie — Brown">
+        <div class="body">
+          <div class="title">Ball Hogs Hoodie — Brown</div>
+          <div class="price">$120.00</div>
+          <label for="size-hoodie-brown">Size:</label>
+          <select id="size-hoodie-brown" name="size">
+            <option value="S">Small</option><option value="M">Medium</option>
+            <option value="L">Large</option><option value="XL">XL</option>
+          </select><br><br>
+          <a class="btn shopify" onclick="shopifyBuy('https://yourstore.myshopify.com/cart/456789012:1')">Buy Now (Shopify)</a>
+          <button class="btn" onclick="buyNow('Ball Hogs Hoodie — Brown', 120.00, 'size-hoodie-brown')">Buy Now (PayPal)</button>
+        </div>
+      </div>
+
+      <!-- Ball Hogs Hoodie — Red -->
+      <div class="card">
+        <img src="images/ballhogs-hoodie-red.jpg" alt="Ball Hogs Hoodie — Red">
+        <div class="body">
+          <div class="title">Ball Hogs Hoodie — Red</div>
+          <div class="price">$120.00</div>
+          <label for="size-hoodie-red">Size:</label>
+          <select id="size-hoodie-red" name="size">
+            <option value="S">Small</option><option value="M">Medium</option>
+            <option value="L">Large</option><option value="XL">XL</option>
+          </select><br><br>
+          <a class="btn shopify" onclick="shopifyBuy('https://yourstore.myshopify.com/cart/567890123:1')">Buy Now (Shopify)</a>
+          <button class="btn" onclick="buyNow('Ball Hogs Hoodie — Red', 120.00, 'size-hoodie-red')">Buy Now (PayPal)</button>
+        </div>
+      </div>
+
+      <!-- Lip Jorts -->
+      <div class="card">
+        <img src="images/lips-jorts.jpg" alt="Lip Jorts">
+        <div class="body">
+          <div class="title">Lip Jorts</div>
+          <div class="price">$70.00</div>
+          <label for="size-jorts">Size:</label>
+          <select id="size-jorts" name="size">
+            <option value="S">Small</option><option value="M">Medium</option>
+            <option value="L">Large</option><option value="XL">XL</option>
+          </select><br><br>
+          <a class="btn shopify" onclick="shopifyBuy('https://yourstore.myshopify.com/cart/678901234:1')">Buy Now (Shopify)</a>
+          <button class="btn" onclick="buyNow('Lip Jorts', 70.00, 'size-jorts')">Buy Now (PayPal)</button>
+        </div>
+      </div>
+
+      <!-- Graffiti Beanie -->
+      <div class="card">
+        <img src="images/graffiti-beanie.jpg" alt="Graffiti Beanie">
+        <div class="body">
+          <div class="title">Graffiti Beanie</div>
+          <div class="price">$35.00</div>
+          <label for="size-beanie-graffiti">Size:</label>
+          <select id="size-beanie-graffiti" name="size">
+            <option value="One Size">One Size Fits All</option>
+          </select><br><br>
+          <a class="btn shopify" onclick="shopifyBuy('https://yourstore.myshopify.com/cart/789012345:1')">Buy Now (Shopify)</a>
+          <button class="btn" onclick="buyNow('Graffiti Beanie', 35.00, 'size-beanie-graffiti')">Buy Now (PayPal)</button>
+        </div>
+      </div>
+
+      <!-- Vintage Faces Beanie -->
+      <div class="card">
+        <img src="images/vintage-faces-beanie.jpg" alt="Vintage Faces Beanie">
+        <div class="body">
+          <div class="title">Vintage Faces Beanie</div>
+          <div class="price">$35.00</div>
+          <label for="size-beanie-vintage">Size:</label>
+          <select id="size-beanie-vintage" name="size">
+            <option value="One Size">One Size Fits All</option>
+          </select><br><br>
+          <a class="btn shopify" onclick="shopifyBuy('https://yourstore.myshopify.com/cart/890123456:1')">Buy Now (Shopify)</a>
+          <button class="btn" onclick="buyNow('Vintage Faces Beanie', 35.00, 'size-beanie-vintage')">Buy Now (PayPal)</button>
+        </div>
+      </div>
+
+      <!-- Blindfold Hoodie -->
+      <div class="card">
+        <img src="images/blindfold-hoodie.jpg" alt="Blindfold Hoodie">
+        <div class="body">
+          <div class="title">Blindfold Hoodie</div>
+          <div class="price">$110.00</div>
+          <label for="size-hoodie-blindfold">Size:</label>
+          <select id="size-hoodie-blindfold" name="size">
+            <option value="S">Small</option><option value="M">Medium</option>
+            <option value="L">Large</option><option value="XL">XL</option>
+          </select><br><br>
+          <a class="btn shopify" onclick="shopifyBuy('https://yourstore.myshopify.com/cart/901234567:1')">Buy Now (Shopify)</a>
+          <button class="btn" onclick="buyNow('Blindfold Hoodie', 110.00, 'size-hoodie-blindfold')">Buy Now (PayPal)</button>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Hoodie Black -->
-    <div class="card">
-      <img src="images/ballhogs-hoodie-black.jpg" alt="Ball Hogs Hoodie Black">
-      <div class="body">
-        <strong>Ball Hogs Hoodie Black</strong><br>
-        <span class="price">$120.00</span><br>
-        <label for="size-hoodie-black">Size:</label>
-        <select id="size-hoodie-black" name="size">
-          <option value="S">Small</option>
-          <option value="M">Medium</option>
-          <option value="L">Large</option>
-          <option value="XL">XL</option>
-        </select><br><br>
-        <a class="btn" href="https://paypal.me/ForeverApparel/120" target="_blank">Buy Now</a>
-      </div>
+    <hr>
+
+    <h2>Brand Notes</h2>
+    <dl>
+      <dt>FA</dt><dd>Forever Apparel</dd>
+      <dt>Ball Hogs</dt><dd>Signature mascot logo</dd>
+      <dt>Rhinestone</dt><dd>Reflective accents</dd>
+      <dt>Drop</dt><dd>A timed release of curated items</dd>
+    </dl>
+
+    <h2>Gallery</h2>
+    <div class="gallery">
+      <img src="images/logo-ballhogs.jpg" alt="Logo Thumb" width="120" height="120">
+      <img src="images/rhinestone-pants.jpg" alt="Pants Thumb" width="120" height="120">
+      <img src="images/ballhogs-hoodie-black.jpg" alt="Hoodie Thumb" width="120" height="120">
     </div>
 
-    <!-- Hoodie Brown -->
-    <div class="card">
-      <img src="images/ballhogs-hoodie-brown.jpg" alt="Ball Hogs Hoodie Brown">
-      <div class="body">
-        <strong>Ball Hogs Hoodie Brown</strong><br>
-        <span class="price">$120.00</span><br>
-        <label for="size-hoodie-brown">Size:</label>
-        <select id="size-hoodie-brown" name="size">
-          <option value="S">Small</option>
-          <option value="M">Medium</option>
-          <option value="L">Large</option>
-          <option value="XL">XL</option>
-        </select><br><br>
-        <a class="btn" href="https://paypal.me/ForeverApparel/120" target="_blank">Buy Now</a>
-      </div>
-    </div>
+    <h3>Thumbnail Example</h3>
+    <a href="images/logo-ballhogs.jpg"><img src="images/logo-ballhogs.jpg" alt="Logo Thumbnail" width="200" height="100"></a>
 
-    <!-- Hoodie Red -->
-    <div class="card">
-      <img src="images/ballhogs-hoodie-red.jpg" alt="Ball Hogs Hoodie Red">
-      <div class="body">
-        <strong>Ball Hogs Hoodie Red</strong><br>
-        <span class="price">$120.00</span><br>
-        <label for="size-hoodie-red">Size:</label>
-        <select id="size-hoodie-red" name="size">
-          <option value="S">Small</option>
-          <option value="M">Medium</option>
-          <option value="L">Large</option>
-          <option value="XL">XL</option>
-        </select><br><br>
-        <a class="btn" href="https://paypal.me/ForeverApparel/120" target="_blank">Buy Now</a>
-      </div>
-    </div>
+    <h2>Goal Tracker</h2>
+    <progress value="5000" max="10000">5000</progress>
 
-    <!-- Jorts -->
-    <div class="card">
-      <img src="images/lips-jorts.jpg" alt="Lip Jorts">
-      <div class="body">
-        <strong>Lip Jorts</strong><br>
-        <span class="price">$70.00</span><br>
-        <label for="size-jorts">Size:</label>
-        <select id="size-jorts" name="size">
-          <option value="S">Small</option>
-          <option value="M">Medium</option>
-          <option value="L">Large</option>
-          <option value="XL">XL</option>
-        </select><br><br>
-        <a class="btn" href="https://paypal.me/ForeverApparel/70" target="_blank">Buy Now</a>
-      </div>
-    </div>
+    <h2>Contact</h2>
+    <p><a href="mailto:foreverapparel@example.com">foreverapparel@example.com</a></p>
 
-    <!-- Graffiti Beanie -->
-    <div class="card">
-      <img src="images/graffiti-beanie.jpg" alt="Graffiti Beanie">
-      <div class="body">
-        <strong>Graffiti Beanie</strong><br>
-        <span class="price">$35.00</span><br>
-        <label for="size-beanie-graffiti">Size:</label>
-        <select id="size-beanie-graffiti" name="size">
-          <option value="One Size">One Size Fits All</option>
-        </select><br><br>
-        <a class="btn" href="https://paypal.me/ForeverApparel/35" target="_blank">Buy Now</a>
-      </div>
-    </div>
+  </main>
 
-    <!-- Vintage Faces Beanie -->
-    <div class="card">
-      <img src="images/vintage-faces-beanie.jpg" alt="Vintage Faces Beanie">
-      <div class="body">
-        <strong>Vintage Faces Beanie</strong><br>
-        <span class="price">$35.00</span><br>
-        <label for="size-beanie-vintage">Size:</label>
-        <select id="size-beanie-vintage" name="size">
-          <option value="One Size">One Size Fits All</option>
-        </select><br><br>
-        <a class="btn" href="https://paypal.me/ForeverApparel/35" target="_blank">Buy Now</a>
-      </div>
-    </div>
-
-    <!-- Blindfold Hoodie -->
-    <div class="card">
-      <img src="images/blindfold-hoodie.jpg" alt="Blindfold Hoodie">
-      <div class="body">
-        <strong>Blindfold Hoodie</strong><br>
-        <span class="price">$110.00</span><br>
-        <label for="size-hoodie-blindfold">Size:</label>
-        <select id="size-hoodie-blindfold" name="size">
-          <option value="S">Small</option>
-          <option value="M">Medium</option>
-          <option value="L">Large</option>
-          <option value="XL">XL</option>
-        </select><br><br>
-        <a class="btn" href="https://paypal.me/ForeverApparel/110" target="_blank">Buy Now</a>
-      </div>
-    </div>
-
-  </div>
-
-  <hr>
-
-  <h2 style="padding-left:20px;">Brand Notes</h2>
-  <dl style="padding-left:40px;">
-    <dt>FA</dt><dd>Forever Apparel</dd>
-    <dt>Ball Hogs</dt><dd>Signature mascot logo</dd>
-    <dt>Rhinestone</dt><dd>Reflective accents</dd>
-    <dt>Drop</dt><dd>A timed release of curated items</dd>
-  </dl>
-
-  <h2 style="padding-left:20px;">Gallery</h2>
-  <div class="gallery">
-    <img src="images/logo-ballhogs.jpg" alt="Logo Thumb" width="120" height="120">
-    <img src="images/rhinestone-pants.jpg" alt="Pants Thumb" width="120" height="120">
-    <img src="images/ballhogs-hoodie-black.jpg" alt="Hoodie Thumb" width="120" height="120">
-  </div>
-
-  <h3 style="padding-left:20px;">Thumbnail Example</h3>
-  <a href="images/logo-ballhogs.jpg"><img src="images/logo-ballhogs.jpg" alt="Logo Thumbnail" width="200" height="100"></a>
-
-  <h2 style="padding-left:20px;">Goal Tracker</h2>
-  <progress value="5000" max="10000">5000</progress>
-
-  <h2 style="padding-left:20px;">Contact</h2>
-  <p style="padding-left:20px;"><a href="mailto:foreverapparel@example.com">foreverapparel@example.com</a></p>
-
-</main>
-
-<footer>
-  <small>© 2024 Forever Apparel. All rights reserved.</small>
-</footer>
+  <footer>
+    © 2024 Forever Apparel. All rights reserved.
+  </footer>
 
 </body>
 </html>
-
